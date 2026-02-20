@@ -1,0 +1,190 @@
+Rhino AI - Estructura del Proyecto
+===================================
+
+rhino-ai/
+│
+├── 📄 Documentación Principal
+│   ├── START_HERE.md              ⭐ Comienza aquí
+│   ├── README.md                  📖 Instalación y uso
+│   ├── QUICK_REFERENCE.md         ⚡ Comandos rápidos
+│   ├── WINDOWS_SETUP.md           🪟 Guía Windows
+│   ├── ARCHITECTURE.md            🏗️  Diseño técnico
+│   ├── EXAMPLES.md                💡 Casos de uso
+│   ├── CONTRIBUTING.md            👥 Guía desarrollo
+│   ├── CHANGELOG.md               📝 Historial versiones
+│   ├── PROJECT_SUMMARY.md         📊 Resumen ejecutivo
+│   └── PRE_DEPLOY_CHECKLIST.md    ✅ Checklist deploy
+│
+├── 🚀 Scripts de Inicio
+│   ├── quick-start.sh             🐧 Linux/Mac
+│   ├── quick-start.bat            🪟 Windows
+│   └── validate-setup.py          🔍 Validación setup
+│
+├── ⚙️ Configuración
+│   ├── .env                       🔐 Variables entorno (crear desde sample.env)
+│   ├── sample.env                 📋 Template configuración
+│   ├── docker-compose.yml         🐳 Orquestación Docker
+│   ├── .gitignore                 🚫 Archivos ignorados
+│   └── rubrica_government.json    📏 Rúbrica evaluación
+│
+├── 🔧 Backend (Python + FastAPI)
+│   ├── main.py                    🎯 Entry point
+│   ├── requirements.txt           📦 Dependencias
+│   ├── Dockerfile                 🐳 Container backend
+│   ├── pytest.ini                 🧪 Config tests
+│   │
+│   ├── api/                       🌐 REST API
+│   │   ├── __init__.py
+│   │   └── routes.py              📍 Endpoints
+│   │
+│   ├── services/                  🧠 Lógica negocio
+│   │   ├── __init__.py
+│   │   ├── classifier.py          🏷️  Clasificación docs
+│   │   └── evaluator.py           📊 Evaluación rúbrica
+│   │
+│   ├── domain/                    📐 Modelos dominio
+│   │   ├── __init__.py
+│   │   └── models.py              🗂️  Pydantic models
+│   │
+│   ├── adapters/                  🔌 Integraciones
+│   │   ├── __init__.py
+│   │   ├── llm_interface.py       🤖 Interface LLM
+│   │   ├── openai_adapter.py      🟢 OpenAI GPT
+│   │   ├── anthropic_adapter.py   🟣 Anthropic Claude
+│   │   └── llm_factory.py         🏭 Factory pattern
+│   │
+│   ├── storage/                   💾 Persistencia
+│   │   ├── __init__.py
+│   │   └── database.py            🗄️  SQLAlchemy
+│   │
+│   ├── utils/                     🛠️  Utilidades
+│   │   ├── __init__.py
+│   │   ├── config.py              ⚙️  Configuración
+│   │   └── docx_parser.py         📄 Parser DOCX
+│   │
+│   ├── config/                    📋 Configuración
+│   │   └── rubrica_government.json 📏 Rúbrica
+│   │
+│   └── tests/                     🧪 Tests unitarios
+│       ├── __init__.py
+│       ├── test_scoring.py        ✅ Tests scoring
+│       └── test_fail_fast.py      ⚠️  Tests fail-fast
+│
+├── 🎨 Frontend (React + Vite)
+│   ├── index.html                 🌐 HTML principal
+│   ├── package.json               📦 Dependencias npm
+│   ├── vite.config.js             ⚡ Config Vite
+│   ├── Dockerfile                 🐳 Container frontend
+│   │
+│   └── src/
+│       ├── main.jsx               🎯 Entry point
+│       ├── App.jsx                📱 App principal
+│       ├── index.css              🎨 Estilos globales
+│       │
+│       ├── components/            🧩 Componentes React
+│       │   ├── UploadStep.jsx     📤 Paso 1: Upload
+│       │   ├── QuestionsStep.jsx  ❓ Paso 2: Preguntas
+│       │   └── ReportStep.jsx     📊 Paso 3: Reporte
+│       │
+│       └── services/              🔌 API client
+│           └── api.js             🌐 Axios client
+│
+└── 📊 Estadísticas
+    ├── Total archivos: 56
+    ├── Backend: ~2,500 líneas Python
+    ├── Frontend: ~800 líneas JavaScript
+    ├── Tests: ~200 líneas
+    └── Docs: ~3,000 líneas Markdown
+
+Características Principales
+============================
+
+✅ Upload DOCX con extracción completa
+✅ Clasificación automática (8 tipos)
+✅ Evaluación con rúbrica exacta
+✅ Fail-fast (4 condiciones)
+✅ Hallazgos priorizados con evidencia
+✅ Preguntas inteligentes (P0/P1/P2)
+✅ Score potencial
+✅ Decisión automática
+✅ Export JSON y Markdown
+✅ Multi-LLM (OpenAI, Anthropic)
+✅ SQLite/PostgreSQL
+✅ Docker Compose
+✅ Logs JSON estructurados
+✅ Tests unitarios
+✅ Documentación completa
+
+Tipos de Documentos Soportados
+===============================
+
+1. DTM - Documento Técnico de Migración
+2. DSP - Documento de Solución Propuesta
+3. DTC - Documento Técnico de Configuración
+4. DoD - Definition of Done
+5. PLAN_PRUEBAS_EVIDENCIA - Plan de Pruebas
+6. RUNBOOK_MANUAL_OPERACION - Runbook
+7. SOPORTE_EVOLUTIVO_RCA - RCA
+8. UNKNOWN - Fallback
+
+Flujo de Trabajo
+================
+
+1. Upload DOCX
+   ↓
+2. Extracción estructura (secciones, tablas, metadata)
+   ↓
+3. Clasificación (heurística + LLM)
+   ↓
+4. Evaluación por criterios
+   ↓
+5. Generación hallazgos
+   ↓
+6. Preguntas inteligentes (si gaps P0/P1/P2)
+   ↓
+7. Re-evaluación con respuestas
+   ↓
+8. Reporte final (score, decisión, hallazgos)
+   ↓
+9. Export JSON/Markdown
+
+Inicio Rápido
+=============
+
+1. cp sample.env .env
+2. Editar .env (agregar API key)
+3. docker-compose up --build
+4. Abrir http://localhost:3000
+5. Subir documento DOCX
+6. ¡Ver reporte!
+
+Comandos Útiles
+===============
+
+# Iniciar
+docker-compose up --build
+
+# Ver logs
+docker-compose logs -f
+
+# Tests
+cd backend && pytest tests/ -v
+
+# Validar setup
+python validate-setup.py
+
+# Detener
+docker-compose down
+
+Documentación Recomendada
+==========================
+
+1. START_HERE.md          - Comienza aquí ⭐
+2. README.md              - Instalación completa
+3. QUICK_REFERENCE.md     - Comandos rápidos
+4. EXAMPLES.md            - Casos de uso
+5. ARCHITECTURE.md        - Diseño técnico
+6. WINDOWS_SETUP.md       - Guía Windows
+7. PRE_DEPLOY_CHECKLIST.md - Antes de deploy
+
+¡Listo para usar! 🦏✨

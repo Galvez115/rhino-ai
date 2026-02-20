@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
+      - OPENAI_MAX_TOKENS=${OPENAI_MAX_TOKENS:-4000}
+      - OPENAI_TEMPERATURE=${OPENAI_TEMPERATURE:-0.1}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-3-5-sonnet-20241022}
+      - ANTHROPIC_MAX_TOKENS=${ANTHROPIC_MAX_TOKENS:-4000}
+      - ANTHROPIC_TEMPERATURE=${ANTHROPIC_TEMPERATURE:-0.1}
+      - DATABASE_TYPE=${DATABASE_TYPE:-sqlite}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./rhinoai.db}
+      - UPLOAD_DIR=/app/uploads
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
+    volumes:
+      - ./backend:/app
+      - rhino_uploads:/app/uploads
+      - rhino_db:/app/db
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # Descomenta para usar PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=rhinoai
+      - POSTGRES_PASSWORD=rhinoai
+      - POSTGRES_DB=rhinoai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  rhino_uploads:
+  rhino_db:
+  postgres_data:

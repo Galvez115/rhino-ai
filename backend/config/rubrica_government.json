@@ -1,0 +1,596 @@
+{
+  "version": "1.0",
+  "fail_fast_global": {
+    "FF-01": {
+      "name": "Documento vacío o ilegible",
+      "condition": "word_count < 100 OR extraction_failed",
+      "action": "RECHAZADO",
+      "message": "El documento no contiene contenido suficiente o no se pudo extraer texto"
+    },
+    "FF-02": {
+      "name": "Tipo de documento no identificable",
+      "condition": "doc_type == UNKNOWN AND confidence < 0.6",
+      "action": "REQUIERE_CORRECCION",
+      "message": "No se pudo determinar el tipo de entregable con suficiente confianza"
+    },
+    "FF-03": {
+      "name": "Afirmaciones críticas sin evidencia",
+      "condition": "critical_claims_without_evidence > 0",
+      "action": "RECHAZADO",
+      "message": "Se detectaron afirmaciones críticas sin evidencia documental"
+    },
+    "FF-04": {
+      "name": "Contradicciones materiales",
+      "condition": "material_contradictions > 0",
+      "action": "RECHAZADO",
+      "message": "Se detectaron contradicciones materiales en el documento"
+    }
+  },
+  "tipos_documentos_entregables": {
+    "DTM": {
+      "nombre": "Documento Técnico de Migración",
+      "keywords": ["migración", "migration", "cutover", "rollback", "plan de migración"],
+      "criterios": [
+        {
+          "id": "DTM-01",
+          "nombre": "Alcance y objetivos de migración",
+          "descripcion": "Define claramente qué se migra, desde dónde, hacia dónde y por qué",
+          "peso": 10,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["alcance", "objetivos", "sistemas origen", "sistemas destino"]
+        },
+        {
+          "id": "DTM-02",
+          "nombre": "Inventario de datos y aplicaciones",
+          "descripcion": "Lista completa de datos, esquemas, aplicaciones y dependencias",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["inventario", "volumetría", "dependencias"]
+        },
+        {
+          "id": "DTM-03",
+          "nombre": "Estrategia de migración",
+          "descripcion": "Enfoque técnico (big bang, fases, paralelo), herramientas, scripts",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["estrategia", "herramientas", "scripts"]
+        },
+        {
+          "id": "DTM-04",
+          "nombre": "Plan de rollback",
+          "descripcion": "Procedimiento detallado para revertir la migración en caso de fallo",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["rollback", "criterios de activación", "pasos detallados"]
+        },
+        {
+          "id": "DTM-05",
+          "nombre": "Validación y testing",
+          "descripcion": "Casos de prueba, criterios de aceptación, validación de integridad",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["casos de prueba", "criterios", "validación"]
+        },
+        {
+          "id": "DTM-06",
+          "nombre": "Cronograma y ventanas de mantenimiento",
+          "descripcion": "Timeline detallado con hitos, duraciones y ventanas aprobadas",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["cronograma", "ventanas", "hitos"]
+        },
+        {
+          "id": "DTM-07",
+          "nombre": "Roles y responsabilidades",
+          "descripcion": "RACI o equivalente con contactos y escalamiento",
+          "peso": 10,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["RACI", "contactos", "escalamiento"]
+        },
+        {
+          "id": "DTM-08",
+          "nombre": "Gestión de riesgos",
+          "descripcion": "Identificación, probabilidad, impacto y mitigación de riesgos",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["riesgos", "probabilidad", "impacto", "mitigación"]
+        }
+      ]
+    },
+    "DSP": {
+      "nombre": "Documento de Solución Propuesta",
+      "keywords": ["solución", "propuesta", "arquitectura", "diseño", "solution"],
+      "criterios": [
+        {
+          "id": "DSP-01",
+          "nombre": "Contexto y problemática",
+          "descripcion": "Descripción clara del problema de negocio y técnico a resolver",
+          "peso": 10,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["problema", "contexto", "justificación"]
+        },
+        {
+          "id": "DSP-02",
+          "nombre": "Requisitos funcionales",
+          "descripcion": "Lista priorizada de requisitos funcionales con criterios de aceptación",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["requisitos", "prioridad", "criterios de aceptación"]
+        },
+        {
+          "id": "DSP-03",
+          "nombre": "Requisitos no funcionales",
+          "descripcion": "Performance, seguridad, disponibilidad, escalabilidad con métricas",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["RNF", "métricas", "SLA"]
+        },
+        {
+          "id": "DSP-04",
+          "nombre": "Arquitectura de solución",
+          "descripcion": "Diagramas (C4, componentes), tecnologías, integraciones",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["diagramas", "componentes", "tecnologías"]
+        },
+        {
+          "id": "DSP-05",
+          "nombre": "Modelo de datos",
+          "descripcion": "Esquema de BD, entidades, relaciones, volumetría estimada",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["modelo de datos", "entidades", "volumetría"]
+        },
+        {
+          "id": "DSP-06",
+          "nombre": "Seguridad y cumplimiento",
+          "descripcion": "Autenticación, autorización, cifrado, normativas aplicables",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["seguridad", "autenticación", "cumplimiento"]
+        },
+        {
+          "id": "DSP-07",
+          "nombre": "Plan de implementación",
+          "descripcion": "Fases, entregables, cronograma, recursos necesarios",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["fases", "cronograma", "recursos"]
+        },
+        {
+          "id": "DSP-08",
+          "nombre": "Estimación de costos",
+          "descripcion": "Costos de desarrollo, infraestructura, licencias, operación",
+          "peso": 10,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["costos", "licencias", "TCO"]
+        }
+      ]
+    },
+    "DTC": {
+      "nombre": "Documento Técnico de Configuración",
+      "keywords": ["configuración", "configuration", "setup", "parámetros"],
+      "criterios": [
+        {
+          "id": "DTC-01",
+          "nombre": "Inventario de componentes",
+          "descripcion": "Lista completa de sistemas, servicios y componentes a configurar",
+          "peso": 10,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["inventario", "componentes", "versiones"]
+        },
+        {
+          "id": "DTC-02",
+          "nombre": "Parámetros de configuración",
+          "descripcion": "Tabla detallada: parámetro, valor, justificación, impacto",
+          "peso": 25,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["parámetros", "valores", "justificación"]
+        },
+        {
+          "id": "DTC-03",
+          "nombre": "Procedimientos de configuración",
+          "descripcion": "Pasos detallados, comandos, scripts, orden de ejecución",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["procedimientos", "comandos", "orden"]
+        },
+        {
+          "id": "DTC-04",
+          "nombre": "Validación post-configuración",
+          "descripcion": "Checks, tests, comandos de verificación con outputs esperados",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["validación", "checks", "outputs esperados"]
+        },
+        {
+          "id": "DTC-05",
+          "nombre": "Configuración de seguridad",
+          "descripcion": "Hardening, permisos, certificados, secrets management",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["seguridad", "permisos", "certificados"]
+        },
+        {
+          "id": "DTC-06",
+          "nombre": "Backup y recuperación de configuración",
+          "descripcion": "Cómo respaldar y restaurar configuraciones",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["backup", "restore", "procedimientos"]
+        },
+        {
+          "id": "DTC-07",
+          "nombre": "Troubleshooting",
+          "descripcion": "Problemas comunes, síntomas, soluciones, logs a revisar",
+          "peso": 5,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["problemas", "soluciones", "logs"]
+        }
+      ]
+    },
+    "DoD": {
+      "nombre": "Definition of Done",
+      "keywords": ["definition of done", "DoD", "criterios de aceptación", "done"],
+      "criterios": [
+        {
+          "id": "DoD-01",
+          "nombre": "Criterios funcionales",
+          "descripcion": "Requisitos funcionales cumplidos y verificables",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["criterios funcionales", "verificación"]
+        },
+        {
+          "id": "DoD-02",
+          "nombre": "Criterios de calidad de código",
+          "descripcion": "Cobertura de tests, code review, linting, estándares",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["tests", "cobertura", "code review"]
+        },
+        {
+          "id": "DoD-03",
+          "nombre": "Criterios de testing",
+          "descripcion": "Unit, integration, E2E tests pasando, casos edge cubiertos",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["tests", "cobertura", "casos edge"]
+        },
+        {
+          "id": "DoD-04",
+          "nombre": "Documentación",
+          "descripcion": "README, API docs, diagramas, runbooks actualizados",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["documentación", "README", "API docs"]
+        },
+        {
+          "id": "DoD-05",
+          "nombre": "Seguridad",
+          "descripcion": "Scan de vulnerabilidades, secrets no expuestos, autenticación",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["seguridad", "scan", "autenticación"]
+        },
+        {
+          "id": "DoD-06",
+          "nombre": "Performance",
+          "descripcion": "Métricas de performance dentro de SLA, load tests",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["performance", "SLA", "load tests"]
+        },
+        {
+          "id": "DoD-07",
+          "nombre": "Deploy y rollback",
+          "descripcion": "Pipeline CI/CD funcional, rollback testeado, blue-green",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["CI/CD", "rollback", "deploy"]
+        }
+      ]
+    },
+    "PLAN_PRUEBAS_EVIDENCIA": {
+      "nombre": "Plan de Pruebas y Evidencia",
+      "keywords": ["pruebas", "testing", "test plan", "evidencia", "QA"],
+      "criterios": [
+        {
+          "id": "PPE-01",
+          "nombre": "Alcance de pruebas",
+          "descripcion": "Qué se prueba, qué no, criterios de entrada/salida",
+          "peso": 10,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["alcance", "in scope", "out of scope"]
+        },
+        {
+          "id": "PPE-02",
+          "nombre": "Casos de prueba",
+          "descripcion": "ID, descripción, pasos, datos, resultado esperado, prioridad",
+          "peso": 25,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["casos de prueba", "pasos", "resultado esperado"]
+        },
+        {
+          "id": "PPE-03",
+          "nombre": "Datos de prueba",
+          "descripcion": "Datasets, condiciones, edge cases, datos negativos",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["datos", "edge cases", "negativos"]
+        },
+        {
+          "id": "PPE-04",
+          "nombre": "Ambiente de pruebas",
+          "descripcion": "Configuración, versiones, accesos, datos de conexión",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["ambiente", "configuración", "accesos"]
+        },
+        {
+          "id": "PPE-05",
+          "nombre": "Ejecución y resultados",
+          "descripcion": "Evidencia de ejecución: screenshots, logs, timestamps, ejecutor",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["evidencia", "resultados", "timestamps"]
+        },
+        {
+          "id": "PPE-06",
+          "nombre": "Defectos y resolución",
+          "descripcion": "Bugs encontrados, severidad, estado, resolución",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["defectos", "severidad", "resolución"]
+        },
+        {
+          "id": "PPE-07",
+          "nombre": "Criterios de aceptación",
+          "descripcion": "Umbrales de aprobación, % de casos OK, bloqueantes resueltos",
+          "peso": 10,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["criterios", "umbrales", "aprobación"]
+        }
+      ]
+    },
+    "RUNBOOK_MANUAL_OPERACION": {
+      "nombre": "Runbook o Manual de Operación",
+      "keywords": ["runbook", "operación", "operations", "manual operativo", "SOP"],
+      "criterios": [
+        {
+          "id": "RMO-01",
+          "nombre": "Descripción del sistema",
+          "descripcion": "Qué hace el sistema, componentes, arquitectura simplificada",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["descripción", "componentes", "arquitectura"]
+        },
+        {
+          "id": "RMO-02",
+          "nombre": "Procedimientos de inicio/parada",
+          "descripcion": "Cómo iniciar, detener, reiniciar servicios en orden correcto",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["inicio", "parada", "orden", "comandos"]
+        },
+        {
+          "id": "RMO-03",
+          "nombre": "Monitoreo y alertas",
+          "descripcion": "Qué monitorear, umbrales, dashboards, alertas críticas",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["monitoreo", "umbrales", "alertas"]
+        },
+        {
+          "id": "RMO-04",
+          "nombre": "Troubleshooting común",
+          "descripcion": "Problemas frecuentes, síntomas, diagnóstico, solución paso a paso",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["problemas", "síntomas", "solución"]
+        },
+        {
+          "id": "RMO-05",
+          "nombre": "Backup y recuperación",
+          "descripcion": "Procedimientos de backup, restore, RPO/RTO, validación",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["backup", "restore", "RPO", "RTO"]
+        },
+        {
+          "id": "RMO-06",
+          "nombre": "Escalamiento",
+          "descripcion": "Cuándo escalar, a quién, contactos, SLA de respuesta",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["escalamiento", "contactos", "SLA"]
+        },
+        {
+          "id": "RMO-07",
+          "nombre": "Mantenimiento rutinario",
+          "descripcion": "Tareas periódicas, frecuencia, checklist, automatización",
+          "peso": 10,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["mantenimiento", "frecuencia", "checklist"]
+        },
+        {
+          "id": "RMO-08",
+          "nombre": "Logs y diagnóstico",
+          "descripcion": "Ubicación de logs, cómo leerlos, qué buscar, herramientas",
+          "peso": 5,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["logs", "ubicación", "herramientas"]
+        }
+      ]
+    },
+    "SOPORTE_EVOLUTIVO_RCA": {
+      "nombre": "Soporte Evolutivo o RCA (Root Cause Analysis)",
+      "keywords": ["RCA", "root cause", "incidente", "postmortem", "evolutivo"],
+      "criterios": [
+        {
+          "id": "RCA-01",
+          "nombre": "Resumen ejecutivo",
+          "descripcion": "Qué pasó, impacto, causa raíz en 2-3 párrafos",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["resumen", "impacto", "causa raíz"]
+        },
+        {
+          "id": "RCA-02",
+          "nombre": "Timeline del incidente",
+          "descripcion": "Cronología detallada con timestamps, acciones, observaciones",
+          "peso": 15,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["timeline", "timestamps", "acciones"]
+        },
+        {
+          "id": "RCA-03",
+          "nombre": "Análisis de causa raíz",
+          "descripcion": "5 Whys, diagrama espina de pescado, causa técnica profunda",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["análisis", "5 whys", "causa técnica"]
+        },
+        {
+          "id": "RCA-04",
+          "nombre": "Impacto y métricas",
+          "descripcion": "Usuarios afectados, duración, pérdida de datos, SLA breach",
+          "peso": 15,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["impacto", "métricas", "usuarios afectados"]
+        },
+        {
+          "id": "RCA-05",
+          "nombre": "Acciones correctivas inmediatas",
+          "descripcion": "Qué se hizo para resolver, workarounds, mitigación",
+          "peso": 10,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["acciones", "resolución", "mitigación"]
+        },
+        {
+          "id": "RCA-06",
+          "nombre": "Acciones preventivas",
+          "descripcion": "Plan de acción para evitar recurrencia, responsables, fechas",
+          "peso": 20,
+          "severidad_si_falta": "bloqueante",
+          "evidencia_requerida": ["preventivas", "responsables", "fechas"]
+        },
+        {
+          "id": "RCA-07",
+          "nombre": "Lecciones aprendidas",
+          "descripcion": "Qué funcionó, qué no, mejoras de proceso, comunicación",
+          "peso": 10,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["lecciones", "mejoras", "proceso"]
+        }
+      ]
+    },
+    "UNKNOWN": {
+      "nombre": "Tipo de documento no identificado",
+      "keywords": [],
+      "criterios": [
+        {
+          "id": "UNK-01",
+          "nombre": "Estructura básica",
+          "descripcion": "Título, introducción, secciones, conclusión",
+          "peso": 30,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["título", "secciones"]
+        },
+        {
+          "id": "UNK-02",
+          "nombre": "Contenido técnico",
+          "descripcion": "Información técnica relevante y verificable",
+          "peso": 40,
+          "severidad_si_falta": "mayor",
+          "evidencia_requerida": ["contenido técnico"]
+        },
+        {
+          "id": "UNK-03",
+          "nombre": "Claridad y coherencia",
+          "descripcion": "Texto claro, sin contradicciones, bien estructurado",
+          "peso": 30,
+          "severidad_si_falta": "menor",
+          "evidencia_requerida": ["claridad", "coherencia"]
+        }
+      ]
+    }
+  },
+  "umbrales_decision": {
+    "APROBADO": {
+      "score_minimo": 85,
+      "condiciones_adicionales": [
+        "0 hallazgos bloqueantes",
+        "0 contradicciones materiales",
+        "evidencia presente en criterios críticos"
+      ]
+    },
+    "REQUIERE_CORRECCION": {
+      "score_minimo": 70,
+      "score_maximo": 84
+    },
+    "RECHAZADO": {
+      "score_maximo": 69,
+      "condiciones_adicionales": [
+        "O cualquier fail-fast activo"
+      ]
+    }
+  },
+  "severidades": {
+    "bloqueante": {
+      "descripcion": "Impide aprobación, debe corregirse obligatoriamente",
+      "impacto_score": "alto",
+      "prioridad": "P0"
+    },
+    "mayor": {
+      "descripcion": "Impacto significativo en calidad, debe corregirse",
+      "impacto_score": "medio",
+      "prioridad": "P1"
+    },
+    "menor": {
+      "descripcion": "Mejora recomendada, no bloquea aprobación",
+      "impacto_score": "bajo",
+      "prioridad": "P2"
+    },
+    "sugerencia": {
+      "descripcion": "Optimización o buena práctica",
+      "impacto_score": "muy_bajo",
+      "prioridad": "P3"
+    }
+  },
+  "penalizaciones_tipicas": {
+    "falta_evidencia_critica": {
+      "descripcion": "Criterio crítico sin evidencia documental",
+      "penalizacion": -10,
+      "aplicar_si": "criterio.peso >= 15 AND estado == NO"
+    },
+    "contradiccion_interna": {
+      "descripcion": "Información contradictoria entre secciones",
+      "penalizacion": -15,
+      "aplicar_si": "contradicciones detectadas"
+    },
+    "formato_inadecuado": {
+      "descripcion": "Tablas ilegibles, diagramas faltantes donde se requieren",
+      "penalizacion": -5,
+      "aplicar_si": "formato_score < 0.6"
+    },
+    "versionado_ausente": {
+      "descripcion": "Sin versión, fecha o control de cambios",
+      "penalizacion": -5,
+      "aplicar_si": "metadata_version == null"
+    }
+  },
+  "reglas_consistencia": {
+    "fechas": "Todas las fechas deben ser consistentes y realistas",
+    "versiones": "Versiones de software/componentes deben coincidir en todo el documento",
+    "nombres": "Nombres de sistemas/componentes deben ser consistentes",
+    "metricas": "Unidades y métricas deben ser consistentes (no mezclar MB/GB sin conversión)"
+  },
+  "reglas_anti_invencion": {
+    "regla_1": "Toda afirmación sobre presencia de contenido DEBE incluir location + snippet",
+    "regla_2": "Si no se encuentra evidencia, estado = NO y generar hallazgo con recomendación",
+    "regla_3": "NA solo si criterio genuinamente no aplica (ej: rollback en doc de arquitectura) con justificación",
+    "regla_4": "Preguntas solo para gaps P0/P1/P2 que impiden evaluación o disparan penalizaciones",
+    "regla_5": "Respuestas del usuario se marcan como 'evidencia_externa' y se sugiere dónde insertarlas"
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "version": "1.0",
+  "description": "Detector determinístico de tipo de documento - Gobierno",
+  "type_thresholds": {
+    "DTM": 60,
+    "DSP": 55,
+    "DTC": 60,
+    "DoD": 50,
+    "PLAN_PRUEBAS_EVIDENCIA": 55,
+    "RUNBOOK_MANUAL_OPERACION": 55,
+    "SOPORTE_EVOLUTIVO_RCA": 60,
+    "UNKNOWN": 0
+  },
+  "pseudocode_scoring_0_100": {
+    "signal_weights": {
+      "filename_exact_match": 20,
+      "strong_indicator_heading": 15,
+      "strong_indicator_table": 12,
+      "keyword_density_high": 10,
+      "keyword_density_medium": 5,
+      "structural_pattern": 8,
+      "metadata_match": 5
+    }
+  },
+  "document_types": {
+    "DTM": {
+      "name": "Documento Técnico de Migración",
+      "filename_tokens": ["dtm", "migracion", "migration", "cutover"],
+      "strong_indicators": {
+        "headings": [
+          "plan de migración",
+          "estrategia de migración",
+          "plan de rollback",
+          "rollback",
+          "cutover",
+          "inventario de datos",
+          "mapeo de datos",
+          "validación post-migración"
+        ],
+        "tables": [
+          "inventario",
+          "mapeo",
+          "cronograma de migración",
+          "matriz de trazabilidad",
+          "RF↔TC↔release"
+        ],
+        "keywords": [
+          "migración",
+          "rollback",
+          "cutover",
+          "datos origen",
+          "datos destino",
+          "transformación",
+          "carga",
+          "validación de integridad"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_seccion_rollback",
+        "tiene_inventario_datos",
+        "tiene_cronograma_migracion",
+        "tiene_matriz_trazabilidad_RF_TC"
+      ]
+    },
+    "DSP": {
+      "name": "Documento de Solución Propuesta",
+      "filename_tokens": ["dsp", "solucion", "propuesta", "solution", "proposal"],
+      "strong_indicators": {
+        "headings": [
+          "arquitectura",
+          "solución propuesta",
+          "diseño de solución",
+          "requisitos funcionales",
+          "requisitos no funcionales",
+          "modelo de datos",
+          "diagrama de componentes",
+          "escenarios de uso"
+        ],
+        "tables": [
+          "requisitos",
+          "casos de uso",
+          "componentes",
+          "tecnologías",
+          "estimación de costos",
+          "escenarios"
+        ],
+        "keywords": [
+          "arquitectura",
+          "solución",
+          "diseño",
+          "requisitos",
+          "componentes",
+          "integración",
+          "escalabilidad",
+          "reglas de negocio"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_arquitectura",
+        "tiene_requisitos_funcionales",
+        "tiene_modelo_datos",
+        "tiene_escenarios_negocio"
+      ]
+    },
+    "DTC": {
+      "name": "Documento Técnico de Configuración",
+      "filename_tokens": ["dtc", "configuracion", "configuration", "config", "setup"],
+      "strong_indicators": {
+        "headings": [
+          "configuración",
+          "parámetros",
+          "setup",
+          "instalación",
+          "procedimiento de configuración",
+          "validación de configuración",
+          "endpoints",
+          "apis"
+        ],
+        "tables": [
+          "parámetros",
+          "configuración",
+          "valores",
+          "endpoints",
+          "apis",
+          "códigos de error",
+          "autenticación"
+        ],
+        "keywords": [
+          "configuración",
+          "parámetros",
+          "valores",
+          "setup",
+          "instalación",
+          "comandos",
+          "scripts",
+          "endpoints",
+          "apis",
+          "autenticación",
+          "códigos de error"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_tabla_parametros",
+        "tiene_comandos_scripts",
+        "tiene_endpoints_apis",
+        "tiene_codigos_error"
+      ]
+    },
+    "DoD": {
+      "name": "Definition of Done",
+      "filename_tokens": ["dod", "definition", "done", "criterios"],
+      "strong_indicators": {
+        "headings": [
+          "definition of done",
+          "criterios de aceptación",
+          "checklist",
+          "criterios de calidad",
+          "done"
+        ],
+        "tables": [
+          "criterios",
+          "checklist",
+          "aceptación"
+        ],
+        "keywords": [
+          "done",
+          "criterios",
+          "aceptación",
+          "checklist",
+          "completado",
+          "verificación"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_checklist",
+        "tiene_criterios_aceptacion"
+      ]
+    },
+    "PLAN_PRUEBAS_EVIDENCIA": {
+      "name": "Plan de Pruebas y Evidencia",
+      "filename_tokens": ["plan", "pruebas", "test", "testing", "qa", "evidencia"],
+      "strong_indicators": {
+        "headings": [
+          "plan de pruebas",
+          "casos de prueba",
+          "test cases",
+          "evidencia",
+          "resultados",
+          "ejecución de pruebas",
+          "datos de prueba"
+        ],
+        "tables": [
+          "casos de prueba",
+          "test cases",
+          "pasos",
+          "resultado esperado",
+          "resultado obtenido",
+          "evidencia",
+          "datos de prueba"
+        ],
+        "keywords": [
+          "pruebas",
+          "test",
+          "casos",
+          "evidencia",
+          "resultado esperado",
+          "resultado obtenido",
+          "pasos",
+          "datos de prueba",
+          "ejecutar",
+          "validar"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_casos_prueba_con_pasos",
+        "tiene_datos_prueba",
+        "tiene_resultados_evidencia"
+      ]
+    },
+    "RUNBOOK_MANUAL_OPERACION": {
+      "name": "Runbook o Manual de Operación",
+      "filename_tokens": ["runbook", "manual", "operacion", "operations", "sop"],
+      "strong_indicators": {
+        "headings": [
+          "runbook",
+          "manual de operación",
+          "procedimientos",
+          "inicio y parada",
+          "monitoreo",
+          "troubleshooting",
+          "ventanas de mantenimiento",
+          "rollback operativo"
+        ],
+        "tables": [
+          "procedimientos",
+          "comandos",
+          "alertas",
+          "monitoreo",
+          "ventanas",
+          "escalamiento"
+        ],
+        "keywords": [
+          "runbook",
+          "operación",
+          "procedimientos",
+          "inicio",
+          "parada",
+          "reinicio",
+          "monitoreo",
+          "alertas",
+          "troubleshooting",
+          "ventanas de mantenimiento",
+          "rollback operativo"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_procedimientos_inicio_parada",
+        "tiene_monitoreo_alertas",
+        "tiene_ventanas_mantenimiento",
+        "tiene_troubleshooting"
+      ]
+    },
+    "SOPORTE_EVOLUTIVO_RCA": {
+      "name": "Soporte Evolutivo o RCA",
+      "filename_tokens": ["rca", "root", "cause", "incidente", "postmortem", "evolutivo"],
+      "strong_indicators": {
+        "headings": [
+          "root cause analysis",
+          "rca",
+          "análisis de causa raíz",
+          "timeline",
+          "cronología",
+          "incidente",
+          "postmortem",
+          "lecciones aprendidas",
+          "acciones preventivas"
+        ],
+        "tables": [
+          "timeline",
+          "cronología",
+          "acciones",
+          "causa raíz",
+          "impacto"
+        ],
+        "keywords": [
+          "rca",
+          "root cause",
+          "causa raíz",
+          "incidente",
+          "timeline",
+          "cronología",
+          "5 whys",
+          "postmortem",
+          "lecciones aprendidas",
+          "acciones preventivas"
+        ]
+      },
+      "structural_patterns": [
+        "tiene_timeline_cronologia",
+        "tiene_causa_raiz",
+        "tiene_acciones_preventivas"
+      ]
+    }
+  },
+  "dominancia_estructural": {
+    "rules": [
+      {
+        "condition": "tiene_matriz_trazabilidad_RF_TC AND tiene_seccion_rollback",
+        "winner": "DTM",
+        "reason": "Matriz RF↔TC↔release es distintiva de DTM"
+      },
+      {
+        "condition": "tiene_escenarios_negocio AND tiene_arquitectura",
+        "winner": "DSP",
+        "reason": "Escenarios de negocio + arquitectura son distintivos de DSP"
+      },
+      {
+        "condition": "tiene_endpoints_apis AND tiene_codigos_error",
+        "winner": "DTC",
+        "reason": "APIs + códigos de error son distintivos de DTC"
+      },
+      {
+        "condition": "tiene_ventanas_mantenimiento AND tiene_monitoreo_alertas",
+        "winner": "RUNBOOK_MANUAL_OPERACION",
+        "reason": "Ventanas + monitoreo son distintivos de Runbook"
+      },
+      {
+        "condition": "tiene_timeline_cronologia AND tiene_causa_raiz",
+        "winner": "SOPORTE_EVOLUTIVO_RCA",
+        "reason": "Timeline + causa raíz son distintivos de RCA"
+      }
+    ]
+  },
+  "conflict_resolution": {
+    "DTM_vs_PLAN_PRUEBAS": {
+      "rule": "Si tiene pasos/datos/resultados de prueba => PLAN_PRUEBAS. Si tiene mapeo RF↔TC↔release => DTM",
+      "signals_favor_DTM": ["matriz_trazabilidad_RF_TC", "rollback", "inventario_datos"],
+      "signals_favor_PLAN": ["casos_prueba_con_pasos", "datos_prueba", "resultado_esperado"]
+    },
+    "DSP_vs_DTC": {
+      "rule": "Si tiene APIs/endpoints/códigos error => DTC. Si tiene escenarios/reglas negocio => DSP",
+      "signals_favor_DTC": ["endpoints", "apis", "codigos_error", "autenticacion"],
+      "signals_favor_DSP": ["escenarios", "reglas_negocio", "arquitectura_componentes"]
+    },
+    "RUNBOOK_vs_DTC": {
+      "rule": "Si tiene ventanas/rollback operativo/monitoreo => RUNBOOK. Si tiene parámetros/setup => DTC",
+      "signals_favor_RUNBOOK": ["ventanas_mantenimiento", "rollback_operativo", "monitoreo", "alertas"],
+      "signals_favor_DTC": ["parametros_configuracion", "setup", "instalacion"]
+    },
+    "RCA_vs_RUNBOOK": {
+      "rule": "Si tiene timeline/causa raíz => RCA. Si tiene procedimientos operativos => RUNBOOK",
+      "signals_favor_RCA": ["timeline", "cronologia", "causa_raiz", "5_whys", "postmortem"],
+      "signals_favor_RUNBOOK": ["procedimientos", "inicio_parada", "operacion"]
+    }
+  },
+  "filename_vs_content_policy": {
+    "threshold_difference": 15,
+    "min_strong_indicators_content": 2,
+    "rule": "Si nombre dice tipo X pero contenido ganador Y difiere >15 puntos Y tiene >=2 indicadores fuertes => gana contenido + conflict_flag=true"
+  },
+  "unknown_handling": {
+    "conditions": [
+      "Ningún tipo supera su umbral",
+      "Ningún tipo tiene al menos 1 indicador fuerte"
+    ],
+    "questions_to_classify": [
+      "¿El documento describe un proceso de migración de datos o sistemas?",
+      "¿El documento propone una solución técnica o arquitectura?",
+      "¿El documento contiene parámetros de configuración y procedimientos de setup?",
+      "¿El documento es un checklist de criterios de aceptación (Definition of Done)?",
+      "¿El documento contiene casos de prueba con pasos y resultados esperados?",
+      "¿El documento describe procedimientos operativos (inicio, parada, monitoreo)?",
+      "¿El documento analiza un incidente con timeline y causa raíz?"
+    ]
+  }
+}
