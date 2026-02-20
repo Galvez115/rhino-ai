@@ -167,73 +167,7 @@ function ReportStep({ runId, filename, docType, evaluation, onReset, detectionRe
           </div>
         </div>
       )}
-              <div style={{ marginTop: '20px' }}>
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '10px' }}>Top 3 Candidatos:</h3>
-                {detectionResult.top3.map((candidate, idx) => (
-                  <div key={idx} style={{ 
-                    padding: '10px', 
-                    background: idx === 0 ? '#f0fff4' : '#f7fafc',
-                    borderLeft: `4px solid ${idx === 0 ? '#48bb78' : '#cbd5e0'}`,
-                    marginBottom: '10px',
-                    borderRadius: '4px'
-                  }}>
-                    <div style={{ fontWeight: 'bold' }}>
-                      {idx + 1}. {candidate.type} - Score: {candidate.score}
-                    </div>
-                    <div style={{ fontSize: '0.9rem', color: '#666', marginTop: '5px' }}>
-                      {candidate.why}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Conflict Warning */}
-            {detectionResult.conflict_name_vs_content && (
-              <div style={{ 
-                marginTop: '20px', 
-                padding: '15px', 
-                background: '#fffaf0',
-                border: '2px solid #ed8936',
-                borderRadius: '6px'
-              }}>
-                <h3 style={{ color: '#c05621', marginBottom: '10px' }}>
-                  ⚠️ Conflicto: Nombre vs Contenido
-                </h3>
-                <p>
-                  El nombre del archivo sugiere <strong>{detectionResult.filename_suggested_type}</strong>, 
-                  pero el contenido indica <strong>{detectionResult.tipo_detectado}</strong>.
-                </p>
-                <p style={{ marginTop: '10px', fontSize: '0.9rem' }}>
-                  <strong>Recomendación:</strong> Verificar el nombre del archivo y actualizar 
-                  el control documental si es necesario.
-                </p>
-              </div>
-            )}
-
-            {/* UNKNOWN Questions */}
-            {detectionResult.tipo_detectado === 'UNKNOWN' && detectionResult.questions_to_classify && (
-              <div style={{ 
-                marginTop: '20px', 
-                padding: '15px', 
-                background: '#ebf8ff',
-                borderRadius: '6px'
-              }}>
-                <h3 style={{ marginBottom: '10px' }}>❓ Preguntas para Clasificar</h3>
-                <p style={{ marginBottom: '10px' }}>
-                  No se pudo determinar el tipo de documento. Responde estas preguntas:
-                </p>
-                <ul style={{ paddingLeft: '20px' }}>
-                  {detectionResult.questions_to_classify.map((q, idx) => (
-                    <li key={idx} style={{ marginBottom: '8px' }}>{q}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
+      
       {/* Fail-Fast */}
       {evaluation.fail_fast && evaluation.fail_fast.some(ff => ff.active) && (
         <div className="card" style={{ borderLeft: '4px solid #f56565' }}>
